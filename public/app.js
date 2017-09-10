@@ -3,43 +3,76 @@ $.getJSON("/articles", function(data) {
   // For each one
   for (var i = 0; i < data.length; i++) {
     // Display the apropos information on the page
-    $("#articles").append("<p data-id='" + data[i]._id + "'>" + data[i].title + "<br /><a href='" + data[i].link + "'>" + data[i].link + "</a></p><button type='submit' id='save' class='btn btn-default'>Save Article</button>");
+    $("#articles").append("<p>" + data[i].title + "<br /><a href='" + data[i].link + "'>" + data[i].link + "</a></p><button type='submit' data-id='" + data[i]._id + "'class='btn btn-default' id='saveArticle'>Save Article</button>");
   }
 });
 
 // Whenever someone clicks a p tag
-$(document).on("click", "p", function() {
+
+
+//$(document).on("click", "p", function() {
+$(document).on("click", "#saveArticle", function() {
+ var currentURL = window.location.origin;
+     //  //AJAX posts the data to friends API.
+     // $.post(currentURL + "/api/friends", newFriend, function(data) {
+     //            //Grab the result from the AJAX post so that the best match's name and photo are displayed.
+     //            $("#bestMatch").text(data.name);
+     //            $("#bestPic").attr("src", data.photo);
+     //        });
+            
+
+  var modal = document.getElementById('myModal');
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks on the button, open the modal 
+    
+        modal.style.display = "block";
+   
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
   // Empty the notes from the note section
-  $("#notes").empty();
+  //$("#notes").empty();
   // Save the id from the p tag
   var thisId = $(this).attr("data-id");
-
+  console.log("p id: ",thisId);
+  
   // Now make an ajax call for the Article
   $.ajax({
     method: "GET",
     url: "/articles/" + thisId
+
   })
-    // With that done, add the note information to the page
+  // With that done, add the note information to the page
     .done(function(data) {
+      
       console.log(data);
+      
       // The title of the article
-      $("#notes").append("<h2>" + data.title + "</h2>");
+      $(".modal-content").append("<h3>" + data.title + "</h3>");
+
       // An input to enter a new title
-      $("#notes").append("<input id='titleinput' name='title' >");
+     // $(".modal-content").append("<input id='titleinput' name='title' >");
       // A textarea to add a new note body
-      $("#notes").append("<textarea id='bodyinput' name='body'></textarea>");
+      $(".modal-content").append("<textarea id='bodyinput' name='body'></textarea>");
       // A button to submit a new note, with the id of the article saved to it
-      $("#notes").append("<button data-id='" + data._id + "' id='savenote'>Save Note</button>");
+      $(".modal-content").append("<button data-id='" + data._id + "' id='savenote'>Save Note</button>");
 
       // If there's a note in the article
       if (data.note) {
         // Place the title of the note in the title input
-        $("#titleinput").val(data.note.title);
+        $(".modal-content").val(data.note.title);
         // Place the body of the note in the body textarea
-        $("#bodyinput").val(data.note.body);
+        $(".modal-content").val(data.note.body);
       }
     });
 });
+
 
 // When you click the savenote button
 $(document).on("click", "#savenote", function() {
